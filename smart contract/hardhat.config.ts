@@ -7,6 +7,7 @@ import {
   FORKING_BLOCK_NUMMBER,
   INFURA_API_KEY,
   POLYGONSCAN_API_KEY,
+  BASESCAN_API_KEY,
   getNetworkConfig,
 } from "./config";
 
@@ -33,6 +34,8 @@ const config: HardhatUserConfig = {
     mumbai: getNetworkConfig("mumbai"),
     mode: getNetworkConfig("mode"),
     zora_goerli: getNetworkConfig("zora_goerli"),
+    base_goerli: getNetworkConfig("base_goerli"),
+    optimism: getNetworkConfig("optimism"),
   },
   namedAccounts: {
     deployer: {
@@ -46,6 +49,7 @@ const config: HardhatUserConfig = {
       sepolia: ETHERSCAN_API_KEY,
       polygon: POLYGONSCAN_API_KEY,
       polygonMumbai: POLYGONSCAN_API_KEY,
+      base_goerli: BASESCAN_API_KEY,
     },
   },
   solidity: {
