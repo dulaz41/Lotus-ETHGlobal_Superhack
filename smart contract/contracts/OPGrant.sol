@@ -3,23 +3,30 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title OPGrant
+ * @dev A smart contract for managing project funding proposals.
+ */
 contract OPGrant is Ownable {
+    // Structure to represent a funding proposal
     struct Proposal {
-        address proposer;
-        string name;
-        string project;
-        string description;
-        uint256 totalFunds;
-        uint256 fundingGoal;
-        bool fundingCompleted;
-        bool fundsWithdrawn;
-        address[] funders;
+        address proposer; // Address of the proposal creator
+        string name; // Name of the proposal
+        string project; // Name of the project associated with the proposal
+        string description; // Description of the proposal
+        uint256 totalFunds; // Total funds collected for the proposal
+        uint256 fundingGoal; // Amount of funds required for the proposal
+        bool fundingCompleted; // Flag indicating whether funding is completed
+        bool fundsWithdrawn; // Flag indicating whether funds have been withdrawn
+        address[] funders; // List of addresses that have funded the proposal
     }
 
+    // Mapping to store proposals using a unique identifier
     mapping(uint256 => Proposal) public proposals;
 
-    uint256 public proposalCounter;
+    uint256 public proposalCounter; // Counter to track the number of proposals
 
+    // Events
     event ProposalCreated(
         uint256 proposalId,
         address proposer,
@@ -28,7 +35,15 @@ contract OPGrant is Ownable {
         string description,
         uint256 fundingGoal
     );
+    event ProposalFunded(uint256 proposalId, address funder, uint256 amount);
+    event ProposalFundingCompleted(uint256 proposalId);
+    event ProposalFundsWithdrawn(
+        uint256 proposalId,
+        address proposalCreator,
+        uint256 withdrawalAmount
+    );
 
+    // Modifier to check whether a proposal can be funded
     modifier canFundProposal(uint256 proposalId) {
         require(
             !proposals[proposalId].fundingCompleted,
@@ -48,6 +63,13 @@ contract OPGrant is Ownable {
 
     receive() external payable {}
 
+    /**
+     * @dev Creates a new proposal.
+     * @param name Name of the proposal.
+     * @param project Name of the associated project.
+     * @param description Description of the proposal.
+     * @param fundingGoal Amount of funds required for the proposal.
+     */
     function createProposal(
         string calldata name,
         string calldata project,
@@ -73,6 +95,10 @@ contract OPGrant is Ownable {
         proposalCounter++;
     }
 
+    /**
+     * @dev Funds a proposal.
+     * @param proposalId Identifier of the proposal to fund.
+     */
     function fundProposal(
         uint256 proposalId
     ) public payable canFundProposal(proposalId) {
@@ -99,6 +125,10 @@ contract OPGrant is Ownable {
         emit ProposalFunded(proposalId, msg.sender, msg.value);
     }
 
+    /**
+     * @dev Withdraws funds from a proposal after funding is completed.
+     * @param proposalId Identifier of the proposal to withdraw funds from.
+     */
     function withdrawProposalFunds(uint256 proposalId) external payable {
         require(proposalId < proposalCounter, "Invalid proposal ID");
         Proposal storage proposal = proposals[proposalId];
@@ -121,6 +151,10 @@ contract OPGrant is Ownable {
         );
     }
 
+    /**
+     * @dev Withdraws funds from the contract by the contract owner.
+     * @param amount Amount of funds to withdraw.
+     */
     function withdrawFunds(uint256 amount) external payable onlyOwner {
         require(
             amount <= address(this).balance,
@@ -129,6 +163,12 @@ contract OPGrant is Ownable {
         payable(owner()).transfer(amount);
     }
 
+    // Getters
+
+    /**
+     * @dev Retrieves information about a specific proposal.
+     * @param proposalId Identifier of the proposal.
+     */
     function getProposal(
         uint256 proposalId
     )
@@ -158,6 +198,9 @@ contract OPGrant is Ownable {
         );
     }
 
+    /**
+     * @dev Retrieves a list of proposal IDs for funded proposals.
+     */
     function getFundedProposals() external view returns (uint256[] memory) {
         uint256[] memory fundedProposalIds = new uint256[](proposalCounter);
         uint256 fundedCount = 0;
@@ -178,6 +221,9 @@ contract OPGrant is Ownable {
         return fundedProposals;
     }
 
+    /**
+     * @dev Retrieves a list of proposal IDs for unfunded proposals.
+     */
     function getUnfundedProposals() external view returns (uint256[] memory) {
         uint256[] memory unfundedProposalIds = new uint256[](proposalCounter);
         uint256 unfundedCount = 0;
@@ -198,6 +244,10 @@ contract OPGrant is Ownable {
         return unfundedProposals;
     }
 
+    /**
+     * @dev Retrieves a list of funders for a specific proposal.
+     * @param proposalId Identifier of the proposal.
+     */
     function getProposalFunders(
         uint256 proposalId
     ) external view returns (address[] memory) {
