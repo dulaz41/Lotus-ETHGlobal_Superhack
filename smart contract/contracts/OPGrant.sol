@@ -128,4 +128,33 @@ contract OPGrant is Ownable {
         );
         payable(owner()).transfer(amount);
     }
+
+    function getProposal(
+        uint256 proposalId
+    )
+        external
+        view
+        returns (
+            address proposer,
+            string memory name,
+            string memory project,
+            string memory description,
+            uint256 totalFunds,
+            uint256 fundingGoal,
+            bool fundingCompleted
+        )
+    {
+        require(proposalId < proposalCounter, "Invalid proposal ID");
+        Proposal storage proposal = proposals[proposalId];
+
+        return (
+            proposal.proposer,
+            proposal.name,
+            proposal.project,
+            proposal.description,
+            proposal.totalFunds,
+            proposal.fundingGoal,
+            proposal.fundingCompleted
+        );
+    }
 }
