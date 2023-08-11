@@ -197,4 +197,13 @@ contract OPGrant is Ownable {
 
         return unfundedProposals;
     }
+
+    function getProposalFunders(
+        uint256 proposalId
+    ) external view returns (address[] memory) {
+        require(proposalId < proposalCounter, "Invalid proposal ID");
+        Proposal storage proposal = proposals[proposalId];
+
+        return proposal.funders;
+    }
 }
