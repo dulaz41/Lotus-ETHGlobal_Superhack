@@ -73,7 +73,7 @@ contract OPGrant is Ownable {
         proposalCounter++;
     }
 
-    function fundProject(
+    function fundProposal(
         uint256 proposalId
     ) public payable canFundProposal(proposalId) {
         require(proposalId < proposalCounter, "Invalid proposal ID");
@@ -97,5 +97,35 @@ contract OPGrant is Ownable {
         }
 
         emit ProposalFunded(proposalId, msg.sender, msg.value);
+    }
+
+    function withdrawProposalFunds(uint256 proposalId) external payable {
+        require(proposalId < proposalCounter, "Invalid proposal ID");
+        Proposal storage proposal = proposals[proposalId];
+        require(
+            msg.sender == proposal.proposer,
+            "Only the proposal creator can withdraw funds"
+        );
+        require(proposal.fundingCompleted, "Project funding is not completed");
+        require(proposal.fundingGoal > 0, "No funds available for withdrawal");
+        require(!proposal.fundsWithdrawn, "Funds have already been withdrawn");
+
+        (bool success, ) = msg.sender.call{value: proposal.fundingGoal}("");
+        require(success, "Insufficient funds");
+        proposal.fundsWithdrawn = true;
+
+        emit ProposalFundsWithdrawn(
+            proposalId,
+            msg.sender,
+            proposal.fundingGoal
+        );
+    }
+
+    function withdrawFunds(uint256 amount) external payable onlyOwner {
+        require(
+            amount <= address(this).balance,
+            "Insufficient contract balance"
+        );
+        payable(owner()).transfer(amount);
     }
 }
