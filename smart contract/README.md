@@ -1,6 +1,6 @@
-# OPGrant Smart Contract
+# Lotus Smart Contract
 
-The OPGrant smart contract is a crowdfunding contract that allows users to create proposals for funding projects and receive contributions from other users. It is implemented in Solidity and follows the ERC-20 standard. The contract provides functions for creating proposals, funding projects and withdraw funds.
+The Lotus smart contract is a crowdfunding contract that allows users to create proposals for funding projects and receive contributions from other users. It is implemented in Solidity and follows the ERC-20 standard. The contract provides functions for creating proposals, funding projects and withdraw funds.
 
 ## Features
 
@@ -16,13 +16,13 @@ The OPGrant smart contract is a crowdfunding contract that allows users to creat
 
 ## Contract Structure
 
-The OPGrant contract is built on top of the OpenZeppelin `Ownable` contract, which provides basic authorization control. The contract uses a struct called `Proposal` to store information about each proposal. It includes mappings to track pooled funds, owners, and an array of funders.
+The Lotus contract is built on top of the OpenZeppelin `Ownable` contract, which provides basic authorization control. The contract uses a struct called `Proposal` to store information about each proposal. It includes mappings to track pooled funds, owners, and an array of funders.
 
 The contract maintains a `proposalCounter` variable to assign unique proposal IDs and uses events to emit important contract events, such as proposal creation and funding of successful reviewed proposal.
 
 ## Usage
 
-To use the OPGrant smart contract, follow these steps:
+To use the Lotus smart contract, follow these steps:
 
 1. Deploy the contract to a compatible Ethereum network.
 
@@ -38,4 +38,4 @@ To use the OPGrant smart contract, follow these steps:
 
 ## License
 
-The OPGrant smart contract is released under the MIT License.
+The Lotus smart contract is released under the MIT License.
