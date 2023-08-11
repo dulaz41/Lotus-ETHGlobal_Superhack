@@ -29,6 +29,19 @@ contract OPGrant is Ownable {
         uint256 fundingGoal
     );
 
+    modifier canFundProposal(uint256 proposalId) {
+        require(
+            !proposals[proposalId].fundingCompleted,
+            "Project funding is already completed"
+        );
+        require(
+            !(proposals[proposalId].funders.length > 0) ||
+                proposals[proposalId].funders[0] == msg.sender,
+            "Proposal can only be funded by the initial funder"
+        );
+        _;
+    }
+
     constructor() {
         proposalCounter = 0;
     }
@@ -58,5 +71,31 @@ contract OPGrant is Ownable {
         );
 
         proposalCounter++;
+    }
+
+    function fundProject(
+        uint256 proposalId
+    ) public payable canFundProposal(proposalId) {
+        require(proposalId < proposalCounter, "Invalid proposal ID");
+        Proposal storage proposal = proposals[proposalId];
+
+        require(
+            !proposal.fundingCompleted,
+            "Project funding is already completed"
+        );
+
+        (bool success, ) = msg.sender.call{value: msg.value}("");
+        require(success, "Insufficient funds");
+
+        proposal.totalFunds += msg.value;
+        proposal.funders.push(msg.sender);
+
+        if (proposal.totalFunds >= proposal.fundingGoal) {
+            proposal.fundingCompleted = true;
+
+            emit ProposalFundingCompleted(proposalId);
+        }
+
+        emit ProposalFunded(proposalId, msg.sender, msg.value);
     }
 }
