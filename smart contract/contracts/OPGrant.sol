@@ -157,4 +157,44 @@ contract OPGrant is Ownable {
             proposal.fundingCompleted
         );
     }
+
+    function getFundedProposals() external view returns (uint256[] memory) {
+        uint256[] memory fundedProposalIds = new uint256[](proposalCounter);
+        uint256 fundedCount = 0;
+
+        for (uint256 i = 1; i < proposalCounter; i++) {
+            Proposal storage proposal = proposals[i];
+            if (proposal.fundingCompleted) {
+                fundedProposalIds[fundedCount] = i;
+                fundedCount++;
+            }
+        }
+
+        uint256[] memory fundedProposals = new uint256[](fundedCount);
+        for (uint256 i = 0; i < fundedCount; i++) {
+            fundedProposals[i] = fundedProposalIds[i];
+        }
+
+        return fundedProposals;
+    }
+
+    function getUnfundedProposals() external view returns (uint256[] memory) {
+        uint256[] memory unfundedProposalIds = new uint256[](proposalCounter);
+        uint256 unfundedCount = 0;
+
+        for (uint256 i = 1; i < proposalCounter; i++) {
+            Proposal storage proposal = proposals[i];
+            if (!proposal.fundingCompleted) {
+                unfundedProposalIds[unfundedCount] = i;
+                unfundedCount++;
+            }
+        }
+
+        uint256[] memory unfundedProposals = new uint256[](unfundedCount);
+        for (uint256 i = 0; i < unfundedCount; i++) {
+            unfundedProposals[i] = unfundedProposalIds[i];
+        }
+
+        return unfundedProposals;
+    }
 }
