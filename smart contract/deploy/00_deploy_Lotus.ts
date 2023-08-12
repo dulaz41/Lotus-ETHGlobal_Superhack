@@ -16,17 +16,17 @@ const deployBox: DeployFunction = async function (
   console.log("Deploying from address: ", deployer);
   console.log("Account balance:", ethers.utils.formatEther(deployerBalance));
 
-  const opGrant = await deploy("OPGrant", {
+  const lotus = await deploy("Lotus", {
     from: deployer,
     args: [],
     log: true,
   });
 
-  console.log(`OPGrant deployed at ${opGrant.address}`);
+  console.log(`Lotus deployed at ${lotus.address}`);
 
   if (network.live) {
     console.log(`Sent for verification...`);
-    await verify(opGrant.address, []);
+    await verify(lotus.address, []);
     console.log(`Successfully verified!`);
   }
 };

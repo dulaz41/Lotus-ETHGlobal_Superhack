@@ -4,10 +4,10 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title OPGrant
+ * @title Lotus
  * @dev A smart contract for managing project funding proposals.
  */
-contract OPGrant is Ownable {
+contract Lotus is Ownable {
     // Structure to represent a funding proposal
     struct Proposal {
         address proposer; // Address of the proposal creator
